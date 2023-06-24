@@ -191,6 +191,9 @@ typedef VkFormat h_format;
 typedef VkExtent2D h_extent;
 typedef VkExtent3D h_extent_3d;
 
+typedef VkOffset2D h_offset;
+typedef VkOffset3D h_offset_3d;
+
 typedef VkComponentMapping h_component_mapping;
 
 //
@@ -201,6 +204,8 @@ typedef VkSampler h_sampler;
 
 typedef VkImage h_image;
 typedef VkImageSubresourceRange h_image_subresource_range;
+typedef VkImageLayout h_image_layout;
+typedef VkImageTiling h_image_tiling;
 typedef VkImageCreateInfo h_info_image;
 	#define h_make_info_image(                        \
 			in_image_type,                                \
