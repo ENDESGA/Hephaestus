@@ -16,7 +16,7 @@
 		#define VK_NO_FILESYSTEM
 	#endif
 
-	#include <stdlib.h>
+	//#include <stdlib.h>
 
 	#include <Volk/volk.c>
 /// need <vulkan/...>
@@ -640,9 +640,9 @@ typedef VkCommandBufferAllocateInfo h_info_command_buffer;
 
 h_command_buffer h_new_command_buffer( h_device in_device, h_info_command_buffer in_info )
 {
-	h_command_buffer* temp_buffer = ( h_command_buffer* )malloc( sizeof( h_command_buffer ) );
-	vkAllocateCommandBuffers( in_device, &in_info, temp_buffer );
-	return *temp_buffer;
+	//h_command_buffer* temp_buffer = ( h_command_buffer* )malloc( sizeof( h_command_buffer ) );
+	//vkAllocateCommandBuffers( in_device, &in_info, temp_buffer );
+	//return *temp_buffer;
 }
 
 void allocate_h_command_buffers( h_device in_device, h_info_command_buffer in_info, h_command_buffer* command_buffers )
