@@ -82,6 +82,21 @@ typedef struct VkDeviceMemory_T struct_h_device_memory;
 typedef VkMemoryRequirements h_mem_requirements;
 typedef VkMemoryAllocateInfo h_info_mem_allocate;
 
+unsigned int h_find_memory( VkPhysicalDevice in_physical_device, unsigned int in_type_filter, VkMemoryPropertyFlags in_properties )
+{
+	VkPhysicalDeviceMemoryProperties memory_properties;
+	vkGetPhysicalDeviceMemoryProperties( in_physical_device, &memory_properties );
+
+	for( unsigned int i = 0; i < memory_properties.memoryTypeCount; i++ )
+	{
+		if( ( in_type_filter & ( 1 << i ) ) && ( memory_properties.memoryTypes[ i ].propertyFlags & in_properties ) == in_properties )
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
 //
 
 typedef VkSurfaceKHR h_surface;
@@ -138,7 +153,7 @@ h_device h_new_device( h_physical_device in_physical_device, h_info_device in_in
 
 typedef VkQueue h_queue;
 
-h_queue h_new_queue( h_device in_device, uint32_t family_index, uint32_t queue_index )
+h_queue h_get_queue( h_device in_device, uint32_t family_index, uint32_t queue_index )
 {
 	h_queue temp_queue;
 	vkGetDeviceQueue( in_device, family_index, queue_index, &temp_queue );
@@ -640,9 +655,9 @@ typedef VkCommandBufferAllocateInfo h_info_command_buffer;
 
 h_command_buffer h_new_command_buffer( h_device in_device, h_info_command_buffer in_info )
 {
-	//h_command_buffer* temp_buffer = ( h_command_buffer* )malloc( sizeof( h_command_buffer ) );
-	//vkAllocateCommandBuffers( in_device, &in_info, temp_buffer );
-	//return *temp_buffer;
+	h_command_buffer* temp_buffer = ( h_command_buffer* )malloc( sizeof( h_command_buffer ) );
+	vkAllocateCommandBuffers( in_device, &in_info, temp_buffer );
+	return *temp_buffer;
 }
 
 void allocate_h_command_buffers( h_device in_device, h_info_command_buffer in_info, h_command_buffer* command_buffers )
