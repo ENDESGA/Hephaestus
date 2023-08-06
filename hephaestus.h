@@ -16,15 +16,27 @@
 		#define VK_NO_FILESYSTEM
 	#endif
 
-	//#include <stdlib.h>
-
 	#include <Volk/volk.c>
-/// need <vulkan/...>
-/// need <vk_video/...>
 
 //
 
 	#define h_make_version( major, minor, patch ) VK_MAKE_API_VERSION( 0, major, minor, patch )
+
+	#define H_NARGS( ... ) H_NARGS_( __VA_ARGS__, 7, 6, 5, 4, 3, 2, 1 )
+	#define H_NARGS_( _1, _2, _3, _4, _5, _6, _7, N, ... ) N
+
+	#define H_CONCAT_( A, B ) A##B
+	#define H_CONCAT( A, B ) H_CONCAT_( A, B )
+
+	#define H_APPLY1( X ) ( X )
+	#define H_APPLY2( X, ... ) ( X ) | H_APPLY1( __VA_ARGS__ )
+	#define H_APPLY3( X, ... ) ( X ) | H_APPLY2( __VA_ARGS__ )
+	#define H_APPLY4( X, ... ) ( X ) | H_APPLY3( __VA_ARGS__ )
+	#define H_APPLY5( X, ... ) ( X ) | H_APPLY4( __VA_ARGS__ )
+	#define H_APPLY6( X, ... ) ( X ) | H_APPLY5( __VA_ARGS__ )
+	#define H_APPLY7( X, ... ) ( X ) | H_APPLY6( __VA_ARGS__ )
+
+	#define h_set_flags( ... ) H_CONCAT( H_APPLY, H_NARGS( __VA_ARGS__ ) )( __VA_ARGS__ )
 
 //
 
@@ -33,35 +45,27 @@ typedef VkLayerProperties h_layer_properties;
 //
 
 typedef VkApplicationInfo h_info_app;
-	#define h_make_info_app( in_app_name,                                      \
-													 in_app_version,                                   \
-													 in_engine_name,                                   \
-													 in_engine_version,                                \
-													 in_api_version )                                  \
-		( h_info_app )                                                           \
-		{                                                                        \
-			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,                           \
-			.pApplicationName = in_app_name, .applicationVersion = in_app_version, \
-			.pEngineName = in_engine_name, .engineVersion = in_engine_version,     \
-			.apiVersion = in_api_version,                                          \
+	#define h_make_info_app( in_app_name, in_app_version, in_engine_name, in_engine_version, in_api_version ) \
+		( h_info_app )                                                                                          \
+		{                                                                                                       \
+			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,                                                          \
+			.pApplicationName = in_app_name, .applicationVersion = in_app_version,                                \
+			.pEngineName = in_engine_name, .engineVersion = in_engine_version,                                    \
+			.apiVersion = in_api_version,                                                                         \
 		}
 
 //
 
 typedef VkInstance h_instance;
 typedef VkInstanceCreateInfo h_info_instance;
-	#define h_make_info_instance( in_app_info,                                \
-																in_layer_count,                             \
-																in_layer_names,                             \
-																in_extension_count,                         \
-																in_extension_names )                        \
-		( h_info_instance )                                                     \
-		{                                                                       \
-			.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,                      \
-			.pApplicationInfo = in_app_info, .enabledLayerCount = in_layer_count, \
-			.ppEnabledLayerNames = in_layer_names,                                \
-			.enabledExtensionCount = in_extension_count,                          \
-			.ppEnabledExtensionNames = in_extension_names,                        \
+	#define h_make_info_instance( in_app_info, in_layer_count, in_layer_names, in_extension_count, in_extension_names ) \
+		( h_info_instance )                                                                                               \
+		{                                                                                                                 \
+			.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,                                                                \
+			.pApplicationInfo = in_app_info, .enabledLayerCount = in_layer_count,                                           \
+			.ppEnabledLayerNames = in_layer_names,                                                                          \
+			.enabledExtensionCount = in_extension_count,                                                                    \
+			.ppEnabledExtensionNames = in_extension_names,                                                                  \
 		}
 
 h_instance h_new_instance( h_info_instance in_info )
@@ -74,17 +78,78 @@ h_instance h_new_instance( h_info_instance in_info )
 
 //
 
+typedef VkSurfaceKHR h_surface;
+typedef VkSurfaceCapabilitiesKHR h_surface_capabilities;
+typedef VkSurfaceFormatKHR h_surface_format;
+
+//
+
+typedef VkPhysicalDevice h_physical_device;
+typedef VkPhysicalDeviceProperties h_physical_device_properties;
+typedef VkPhysicalDeviceMemoryProperties h_physical_device_mem_properties;
+typedef VkPhysicalDeviceFeatures h_physical_device_features;
+typedef VkDevice h_device;
+typedef VkDeviceCreateInfo h_info_device;
+	#define h_make_info_device( in_queue_create_info_count, in_queue_create_infos, in_enabled_layer_count, in_enabled_layer_names, in_enabled_extension_count, in_enabled_extension_names, in_enabled_features ) \
+		( h_info_device )                                                                                                                                                                                          \
+		{                                                                                                                                                                                                          \
+			.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,                                                                                                                                                           \
+			.queueCreateInfoCount = in_queue_create_info_count,                                                                                                                                                      \
+			.pQueueCreateInfos = in_queue_create_infos,                                                                                                                                                              \
+			.enabledLayerCount = in_enabled_layer_count,                                                                                                                                                             \
+			.ppEnabledLayerNames = in_enabled_layer_names,                                                                                                                                                           \
+			.enabledExtensionCount = in_enabled_extension_count,                                                                                                                                                     \
+			.ppEnabledExtensionNames = in_enabled_extension_names,                                                                                                                                                   \
+			.pEnabledFeatures = in_enabled_features,                                                                                                                                                                 \
+		}
+
+typedef VkDeviceQueueCreateInfo h_info_device_queue;
+	#define h_make_info_device_queue( in_queue_family_index, in_queue_count, in_queue_priorities ) \
+		( h_info_device_queue )                                                                      \
+		{                                                                                            \
+			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,                                       \
+			.queueFamilyIndex = in_queue_family_index, .queueCount = in_queue_count,                   \
+			.pQueuePriorities = in_queue_priorities,                                                   \
+		}
+
+h_device h_new_device( h_physical_device in_physical_device, h_info_device in_info )
+{
+	h_device temp_device;
+	vkCreateDevice( in_physical_device, &in_info, NULL, &temp_device );
+	volkLoadDevice( temp_device );
+	return temp_device;
+}
+
+//
+
 typedef VkBuffer h_device_buffer;
 typedef struct VkBuffer_T struct_h_device_buffer;
 typedef VkBufferCreateInfo h_info_buffer;
-typedef VkDeviceMemory h_device_memory;
-typedef struct VkDeviceMemory_T struct_h_device_memory;
+typedef VkBufferUsageFlags h_buffer_usage;
+
+	#define h_buffer_usage_vertex VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+	#define h_buffer_usage_index VK_BUFFER_USAGE_INDEX_BUFFER_BIT
+	#define h_buffer_usage_storage VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
+	#define h_buffer_usage_indirect VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT
+	#define h_buffer_usage_uniform VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT
+	#define h_buffer_usage_transfer_dst VK_BUFFER_USAGE_TRANSFER_DST_BIT
+
+typedef VkDeviceMemory h_device_mem;
+typedef struct VkDeviceMemory_T struct_h_device_mem;
 typedef VkMemoryRequirements h_mem_requirements;
 typedef VkMemoryAllocateInfo h_info_mem_allocate;
+typedef VkMemoryPropertyFlags h_mem_properties;
 
-unsigned int h_find_memory( VkPhysicalDevice in_physical_device, unsigned int in_type_filter, VkMemoryPropertyFlags in_properties )
+	#define h_mem_property_host_visible VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+	#define h_mem_property_host_coherent VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+	#define h_mem_property_host_cached VK_MEMORY_PROPERTY_HOST_CACHED_BIT
+	#define h_mem_property_device_local VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+	#define h_mem_property_protected VK_MEMORY_PROPERTY_PROTECTED_BIT
+	#define h_mem_property_lazily_allocated VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT
+
+unsigned int h_find_mem( h_physical_device in_physical_device, unsigned int in_type_filter, h_mem_properties in_properties )
 {
-	VkPhysicalDeviceMemoryProperties memory_properties;
+	h_physical_device_mem_properties memory_properties;
 	vkGetPhysicalDeviceMemoryProperties( in_physical_device, &memory_properties );
 
 	for( unsigned int i = 0; i < memory_properties.memoryTypeCount; i++ )
@@ -95,58 +160,6 @@ unsigned int h_find_memory( VkPhysicalDevice in_physical_device, unsigned int in
 		}
 	}
 	return 0;
-}
-
-//
-
-typedef VkSurfaceKHR h_surface;
-typedef VkSurfaceCapabilitiesKHR h_surface_capabilities;
-typedef VkSurfaceFormatKHR h_surface_format;
-
-//
-
-typedef VkPhysicalDevice h_physical_device;
-typedef VkPhysicalDeviceProperties h_physical_device_properties;
-typedef VkPhysicalDeviceMemoryProperties h_physical_device_memory_properties;
-typedef VkPhysicalDeviceFeatures h_physical_device_features;
-typedef VkDevice h_device;
-typedef VkDeviceCreateInfo h_info_device;
-	#define h_make_info_device( in_queue_create_info_count,    \
-															in_queue_create_infos,         \
-															in_enabled_layer_count,        \
-															in_enabled_layer_names,        \
-															in_enabled_extension_count,    \
-															in_enabled_extension_names,    \
-															in_enabled_features )          \
-		( h_info_device )                                        \
-		{                                                        \
-			.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,         \
-			.queueCreateInfoCount = in_queue_create_info_count,    \
-			.pQueueCreateInfos = in_queue_create_infos,            \
-			.enabledLayerCount = in_enabled_layer_count,           \
-			.ppEnabledLayerNames = in_enabled_layer_names,         \
-			.enabledExtensionCount = in_enabled_extension_count,   \
-			.ppEnabledExtensionNames = in_enabled_extension_names, \
-			.pEnabledFeatures = in_enabled_features,               \
-		}
-
-typedef VkDeviceQueueCreateInfo h_info_device_queue;
-	#define h_make_info_device_queue( in_queue_family_index,                     \
-																		in_queue_count,                            \
-																		in_queue_priorities )                      \
-		( h_info_device_queue )                                                    \
-		{                                                                          \
-			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,                     \
-			.queueFamilyIndex = in_queue_family_index, .queueCount = in_queue_count, \
-			.pQueuePriorities = in_queue_priorities,                                 \
-		}
-
-h_device h_new_device( h_physical_device in_physical_device, h_info_device in_info )
-{
-	h_device temp_device;
-	vkCreateDevice( in_physical_device, &in_info, NULL, &temp_device );
-	volkLoadDevice( temp_device );
-	return temp_device;
 }
 
 //
@@ -290,7 +303,7 @@ typedef VkShaderModuleCreateInfo h_info_shader_module;
 		( h_info_shader_module )                                \
 		{                                                       \
 			.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, \
-			.pCode = in_code,                                     \
+			.pCode = (unsigned int *)in_code,                                     \
 			.codeSize = in_code_size,                             \
 		}
 
@@ -300,6 +313,12 @@ h_shader_module h_new_shader_module( h_device in_device, h_info_shader_module in
 	vkCreateShaderModule( in_device, &in_info, NULL, &temp_image_view );
 	return temp_image_view;
 }
+
+typedef VkShaderStageFlagBits h_shader_stage;
+#define h_shader_stage_vertex VK_SHADER_STAGE_VERTEX_BIT
+#define h_shader_stage_geometry VK_SHADER_STAGE_GEOMETRY_BIT
+#define h_shader_stage_fragment VK_SHADER_STAGE_FRAGMENT_BIT
+#define h_shader_stage_compute VK_SHADER_STAGE_COMPUTE_BIT
 
 typedef VkPipelineShaderStageCreateInfo h_info_pipeline_shader_stage;
 	#define h_make_info_pipeline_shader_stage(                        \
@@ -454,6 +473,23 @@ h_render_pass h_new_render_pass( h_device in_device, h_info_render_pass in_info 
 	return temp_render_pass;
 }
 
+typedef VkRenderPassBeginInfo h_info_begin_render_pass;
+	#define h_make_info_begin_render_pass(                 \
+			in_render_pass,                                    \
+			in_framebuffer,                                    \
+			in_render_area,                                    \
+			in_clear_count,                                    \
+			in_clear_values )                                  \
+		( h_info_begin_render_pass )                         \
+		{                                                    \
+			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, \
+			.renderPass = in_render_pass,                      \
+			.framebuffer = in_framebuffer,                     \
+			.renderArea = in_render_area,                      \
+			.clearValueCount = in_clear_count,                 \
+			.pClearValues = in_clear_values                    \
+		}
+
 //
 
 typedef VkSemaphore h_semaphore;
@@ -534,8 +570,7 @@ typedef VkGraphicsPipelineCreateInfo h_info_pipeline;
 h_pipeline h_new_pipeline( h_device in_device, h_info_pipeline in_info )
 {
 	h_pipeline temp_pipeline;
-	vkCreateGraphicsPipelines( in_device, VK_NULL_HANDLE, 1U, &in_info, NULL,
-														 &temp_pipeline );
+	vkCreateGraphicsPipelines( in_device, VK_NULL_HANDLE, 1U, &in_info, NULL, &temp_pipeline );
 	return temp_pipeline;
 }
 
@@ -565,6 +600,28 @@ h_pipeline_layout h_new_pipeline_layout( h_device in_device, h_info_pipeline_lay
 }
 
 //
+
+typedef VkDescriptorSetLayout h_descriptor_set_layout;
+typedef VkDescriptorSetLayoutBinding h_descriptor_set_layout_binding;
+typedef VkDescriptorSetLayoutCreateInfo h_info_descriptor_set_layout;
+	#define h_make_info_descriptor_set_layout(                        \
+			in_binding_count,                                             \
+			in_bindings,                                                  \
+			in_flags )                                                    \
+		( h_info_descriptor_set_layout )                                \
+		{                                                               \
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, \
+			.bindingCount = in_binding_count,                             \
+			.pBindings = in_bindings,                                     \
+			.flags = in_flags                                             \
+		}
+
+h_descriptor_set_layout h_new_descriptor_set_layout( h_device in_device, h_info_descriptor_set_layout in_info )
+{
+	h_descriptor_set_layout temp_descriptor_set;
+	vkCreateDescriptorSetLayout( in_device, &in_info, null, &temp_descriptor_set );
+	return temp_descriptor_set;
+}
 
 typedef VkDescriptorSet h_descriptor_set;
 typedef VkDescriptorSetAllocateInfo h_info_descriptor_set;
@@ -641,31 +698,23 @@ typedef VkCommandBuffer h_command_buffer;
 typedef VkCommandBufferAllocateInfo h_info_command_buffer;
 	#define h_make_info_command_buffer(                          \
 			in_command_pool,                                         \
-			in_level )                                               \
+			in_level,                                                \
+			in_count )                                               \
 		( h_info_command_buffer )                                  \
 		{                                                          \
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, \
 			.commandPool = in_command_pool,                          \
 			.level = in_level,                                       \
-			.commandBufferCount = 1,                                 \
+			.commandBufferCount = in_count,                          \
 		}
 
-#define h_command_buffer_level_primary VK_COMMAND_BUFFER_LEVEL_PRIMARY
-#define h_command_buffer_level_secondary VK_COMMAND_BUFFER_LEVEL_SECONDARY
+	#define h_command_buffer_level_primary VK_COMMAND_BUFFER_LEVEL_PRIMARY
+	#define h_command_buffer_level_secondary VK_COMMAND_BUFFER_LEVEL_SECONDARY
 
-h_command_buffer h_new_command_buffer( h_device in_device, h_info_command_buffer in_info )
-{
-	h_command_buffer* temp_buffer = ( h_command_buffer* )malloc( sizeof( h_command_buffer ) );
-	vkAllocateCommandBuffers( in_device, &in_info, temp_buffer );
-	return *temp_buffer;
-}
-
-void allocate_h_command_buffers( h_device in_device, h_info_command_buffer in_info, h_command_buffer* command_buffers )
+void h_allocate_command_buffers( h_device in_device, h_info_command_buffer in_info, h_command_buffer* command_buffers )
 {
 	vkAllocateCommandBuffers( in_device, &in_info, command_buffers );
 }
-
-
 
 //
 
