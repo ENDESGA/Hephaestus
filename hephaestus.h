@@ -45,27 +45,39 @@ typedef VkLayerProperties h_layer_properties;
 //
 
 typedef VkApplicationInfo h_info_app;
-	#define h_make_info_app( in_app_name, in_app_version, in_engine_name, in_engine_version, in_api_version ) \
-		( h_info_app )                                                                                          \
-		{                                                                                                       \
-			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,                                                          \
-			.pApplicationName = in_app_name, .applicationVersion = in_app_version,                                \
-			.pEngineName = in_engine_name, .engineVersion = in_engine_version,                                    \
-			.apiVersion = in_api_version,                                                                         \
+	#define h_make_info_app(                                                   \
+		in_app_name,                                                             \
+		in_app_version,                                                          \
+		in_engine_name,                                                          \
+		in_engine_version,                                                       \
+		in_api_version                                                           \
+	)                                                                          \
+		( h_info_app )                                                           \
+		{                                                                        \
+			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,                           \
+			.pApplicationName = in_app_name, .applicationVersion = in_app_version, \
+			.pEngineName = in_engine_name, .engineVersion = in_engine_version,     \
+			.apiVersion = in_api_version,                                          \
 		}
 
 //
 
 typedef VkInstance h_instance;
 typedef VkInstanceCreateInfo h_info_instance;
-	#define h_make_info_instance( in_app_info, in_layer_count, in_layer_names, in_extension_count, in_extension_names ) \
-		( h_info_instance )                                                                                               \
-		{                                                                                                                 \
-			.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,                                                                \
-			.pApplicationInfo = in_app_info, .enabledLayerCount = in_layer_count,                                           \
-			.ppEnabledLayerNames = in_layer_names,                                                                          \
-			.enabledExtensionCount = in_extension_count,                                                                    \
-			.ppEnabledExtensionNames = in_extension_names,                                                                  \
+	#define h_make_info_instance(                                             \
+		in_app_info,                                                            \
+		in_layer_count,                                                         \
+		in_layer_names,                                                         \
+		in_extension_count,                                                     \
+		in_extension_names                                                      \
+	)                                                                         \
+		( h_info_instance )                                                     \
+		{                                                                       \
+			.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,                      \
+			.pApplicationInfo = in_app_info, .enabledLayerCount = in_layer_count, \
+			.ppEnabledLayerNames = in_layer_names,                                \
+			.enabledExtensionCount = in_extension_count,                          \
+			.ppEnabledExtensionNames = in_extension_names,                        \
 		}
 
 h_instance h_new_instance( h_info_instance in_info )
@@ -90,26 +102,38 @@ typedef VkPhysicalDeviceMemoryProperties h_physical_device_mem_properties;
 typedef VkPhysicalDeviceFeatures h_physical_device_features;
 typedef VkDevice h_device;
 typedef VkDeviceCreateInfo h_info_device;
-	#define h_make_info_device( in_queue_create_info_count, in_queue_create_infos, in_enabled_layer_count, in_enabled_layer_names, in_enabled_extension_count, in_enabled_extension_names, in_enabled_features ) \
-		( h_info_device )                                                                                                                                                                                          \
-		{                                                                                                                                                                                                          \
-			.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,                                                                                                                                                           \
-			.queueCreateInfoCount = in_queue_create_info_count,                                                                                                                                                      \
-			.pQueueCreateInfos = in_queue_create_infos,                                                                                                                                                              \
-			.enabledLayerCount = in_enabled_layer_count,                                                                                                                                                             \
-			.ppEnabledLayerNames = in_enabled_layer_names,                                                                                                                                                           \
-			.enabledExtensionCount = in_enabled_extension_count,                                                                                                                                                     \
-			.ppEnabledExtensionNames = in_enabled_extension_names,                                                                                                                                                   \
-			.pEnabledFeatures = in_enabled_features,                                                                                                                                                                 \
+	#define h_make_info_device(                                \
+		in_queue_create_info_count,                              \
+		in_queue_create_infos,                                   \
+		in_enabled_layer_count,                                  \
+		in_enabled_layer_names,                                  \
+		in_enabled_extension_count,                              \
+		in_enabled_extension_names,                              \
+		in_enabled_features                                      \
+	)                                                          \
+		( h_info_device )                                        \
+		{                                                        \
+			.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,         \
+			.queueCreateInfoCount = in_queue_create_info_count,    \
+			.pQueueCreateInfos = in_queue_create_infos,            \
+			.enabledLayerCount = in_enabled_layer_count,           \
+			.ppEnabledLayerNames = in_enabled_layer_names,         \
+			.enabledExtensionCount = in_enabled_extension_count,   \
+			.ppEnabledExtensionNames = in_enabled_extension_names, \
+			.pEnabledFeatures = in_enabled_features,               \
 		}
 
 typedef VkDeviceQueueCreateInfo h_info_device_queue;
-	#define h_make_info_device_queue( in_queue_family_index, in_queue_count, in_queue_priorities ) \
-		( h_info_device_queue )                                                                      \
-		{                                                                                            \
-			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,                                       \
-			.queueFamilyIndex = in_queue_family_index, .queueCount = in_queue_count,                   \
-			.pQueuePriorities = in_queue_priorities,                                                   \
+	#define h_make_info_device_queue(                                            \
+		in_queue_family_index,                                                     \
+		in_queue_count,                                                            \
+		in_queue_priorities                                                        \
+	)                                                                            \
+		( h_info_device_queue )                                                    \
+		{                                                                          \
+			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,                     \
+			.queueFamilyIndex = in_queue_family_index, .queueCount = in_queue_count, \
+			.pQueuePriorities = in_queue_priorities,                                 \
 		}
 
 h_device h_new_device( h_physical_device in_physical_device, h_info_device in_info )
@@ -186,11 +210,22 @@ typedef VkPresentModeKHR h_present_mode;
 typedef VkSwapchainKHR h_swapchain;
 typedef VkSwapchainCreateInfoKHR h_info_swapchain;
 	#define h_make_info_swapchain(                                                 \
-			in_surface, in_min_image_count, in_image_format, in_image_color_space,     \
-			in_image_extent, in_image_array_layers, in_image_usage,                    \
-			in_image_sharing_mode, in_queue_family_index_count,                        \
-			in_queue_family_indices, in_pre_transform, in_composite_alpha,             \
-			in_present_mode, in_clipped, in_old_swapchain )                            \
+		in_surface,                                                                  \
+		in_min_image_count,                                                          \
+		in_image_format,                                                             \
+		in_image_color_space,                                                        \
+		in_image_extent,                                                             \
+		in_image_array_layers,                                                       \
+		in_image_usage,                                                              \
+		in_image_sharing_mode,                                                       \
+		in_queue_family_index_count,                                                 \
+		in_queue_family_indices,                                                     \
+		in_pre_transform,                                                            \
+		in_composite_alpha,                                                          \
+		in_present_mode,                                                             \
+		in_clipped,                                                                  \
+		in_old_swapchain                                                             \
+	)                                                                              \
 		( h_info_swapchain )                                                         \
 		{                                                                            \
 			.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,                      \
@@ -236,16 +271,17 @@ typedef VkImageLayout h_image_layout;
 typedef VkImageTiling h_image_tiling;
 typedef VkImageCreateInfo h_info_image;
 	#define h_make_info_image(                        \
-			in_image_type,                                \
-			in_extent,                                    \
-			in_mip_levels,                                \
-			in_array_layers,                              \
-			in_format,                                    \
-			in_tiling,                                    \
-			in_initial_layout,                            \
-			in_usage,                                     \
-			in_sharing_mode,                              \
-			in_samples )                                  \
+		in_image_type,                                  \
+		in_extent,                                      \
+		in_mip_levels,                                  \
+		in_array_layers,                                \
+		in_format,                                      \
+		in_tiling,                                      \
+		in_initial_layout,                              \
+		in_usage,                                       \
+		in_sharing_mode,                                \
+		in_samples                                      \
+	)                                                 \
 		( h_info_image )                                \
 		{                                               \
 			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, \
@@ -271,11 +307,12 @@ h_image h_new_image( h_device in_device, h_info_image in_info )
 typedef VkImageView h_image_view;
 typedef VkImageViewCreateInfo h_info_image_view;
 	#define h_make_info_image_view(                        \
-			in_image,                                          \
-			in_view_type,                                      \
-			in_format,                                         \
-			in_components,                                     \
-			in_subresource_range )                             \
+		in_image,                                            \
+		in_view_type,                                        \
+		in_format,                                           \
+		in_components,                                       \
+		in_subresource_range                                 \
+	)                                                      \
 		( h_info_image_view )                                \
 		{                                                    \
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO, \
@@ -298,12 +335,13 @@ h_image_view h_new_image_view( h_device in_device, h_info_image_view in_info )
 typedef VkShaderModule h_shader_module;
 typedef VkShaderModuleCreateInfo h_info_shader_module;
 	#define h_make_info_shader_module(                        \
-			in_code,                                              \
-			in_code_size )                                        \
+		in_code,                                                \
+		in_code_size                                            \
+	)                                                         \
 		( h_info_shader_module )                                \
 		{                                                       \
 			.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, \
-			.pCode = (unsigned int *)in_code,                                     \
+			.pCode = ( unsigned int* )in_code,                    \
 			.codeSize = in_code_size,                             \
 		}
 
@@ -315,16 +353,17 @@ h_shader_module h_new_shader_module( h_device in_device, h_info_shader_module in
 }
 
 typedef VkShaderStageFlagBits h_shader_stage;
-#define h_shader_stage_vertex VK_SHADER_STAGE_VERTEX_BIT
-#define h_shader_stage_geometry VK_SHADER_STAGE_GEOMETRY_BIT
-#define h_shader_stage_fragment VK_SHADER_STAGE_FRAGMENT_BIT
-#define h_shader_stage_compute VK_SHADER_STAGE_COMPUTE_BIT
+	#define h_shader_stage_vertex VK_SHADER_STAGE_VERTEX_BIT
+	#define h_shader_stage_geometry VK_SHADER_STAGE_GEOMETRY_BIT
+	#define h_shader_stage_fragment VK_SHADER_STAGE_FRAGMENT_BIT
+	#define h_shader_stage_compute VK_SHADER_STAGE_COMPUTE_BIT
 
 typedef VkPipelineShaderStageCreateInfo h_info_pipeline_shader_stage;
 	#define h_make_info_pipeline_shader_stage(                        \
-			in_stage,                                                     \
-			in_module,                                                    \
-			in_name )                                                     \
+		in_stage,                                                       \
+		in_module,                                                      \
+		in_name                                                         \
+	)                                                                 \
 		( h_info_pipeline_shader_stage )                                \
 		{                                                               \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, \
@@ -337,8 +376,9 @@ typedef VkPipelineShaderStageCreateInfo h_info_pipeline_shader_stage;
 
 typedef VkVertexInputBindingDescription h_vertex_binding;
 	#define h_make_vertex_binding_per_vertex(    \
-			in_binding,                              \
-			in_form_size )                           \
+		in_binding,                                \
+		in_form_size                               \
+	)                                            \
 		( h_vertex_binding )                       \
 		{                                          \
 			.binding = in_binding,                   \
@@ -346,8 +386,9 @@ typedef VkVertexInputBindingDescription h_vertex_binding;
 			.inputRate = VK_VERTEX_INPUT_RATE_VERTEX \
 		}
 	#define h_make_vertex_binding_per_instance(    \
-			in_binding,                                \
-			in_form_size )                             \
+		in_binding,                                  \
+		in_form_size                                 \
+	)                                              \
 		( h_vertex_binding )                         \
 		{                                            \
 			.binding = in_binding,                     \
@@ -359,10 +400,11 @@ typedef VkVertexInputAttributeDescription h_vertex_attribute;
 
 typedef VkPipelineVertexInputStateCreateInfo h_info_pipeline_vertex;
 	#define h_make_info_pipeline_vertex(                                    \
-			in_binding_count,                                                   \
-			in_binding,                                                         \
-			in_attribute_count,                                                 \
-			in_attributes )                                                     \
+		in_binding_count,                                                     \
+		in_binding,                                                           \
+		in_attribute_count,                                                   \
+		in_attributes                                                         \
+	)                                                                       \
 		( h_info_pipeline_vertex )                                            \
 		{                                                                     \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, \
@@ -374,7 +416,8 @@ typedef VkPipelineVertexInputStateCreateInfo h_info_pipeline_vertex;
 
 typedef VkPipelineInputAssemblyStateCreateInfo h_info_pipeline_assembly;
 	#define h_make_info_pipeline_assembly(                                    \
-			in_topology )                                                         \
+		in_topology                                                             \
+	)                                                                         \
 		( h_info_pipeline_assembly )                                            \
 		{                                                                       \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO, \
@@ -391,12 +434,13 @@ typedef VkPrimitiveTopology h_topology;
 
 typedef VkViewport h_viewport;
 	#define h_make_viewport(      \
-			in_x,                     \
-			in_y,                     \
-			in_width,                 \
-			in_height,                \
-			in_depth_min,             \
-			in_depth_max )            \
+		in_x,                       \
+		in_y,                       \
+		in_width,                   \
+		in_height,                  \
+		in_depth_min,               \
+		in_depth_max                \
+	)                             \
 		( h_viewport )              \
 		{                           \
 			.x = in_x,                \
@@ -411,10 +455,11 @@ typedef VkRect2D h_scissor;
 
 typedef VkPipelineViewportStateCreateInfo h_info_pipeline_viewport;
 	#define h_make_info_pipeline_viewport(                              \
-			in_viewport_count,                                              \
-			in_viewports,                                                   \
-			in_scissor_count,                                               \
-			in_scissors )                                                   \
+		in_viewport_count,                                                \
+		in_viewports,                                                     \
+		in_scissor_count,                                                 \
+		in_scissors                                                       \
+	)                                                                   \
 		( h_info_pipeline_viewport )                                      \
 		{                                                                 \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, \
@@ -428,9 +473,11 @@ typedef VkPipelineViewportStateCreateInfo h_info_pipeline_viewport;
 
 typedef VkPipelineRasterizationStateCreateInfo h_info_pipeline_raster;
 	#define h_make_info_pipeline_raster(                                     \
-			in_polygon_mode,                                                     \
-			in_line_width,                                                       \
-			in_cull_mode, in_front_face )                                        \
+		in_polygon_mode,                                                       \
+		in_line_width,                                                         \
+		in_cull_mode,                                                          \
+		in_front_face                                                          \
+	)                                                                        \
 		( h_info_pipeline_raster )                                             \
 		{                                                                      \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, \
@@ -449,12 +496,13 @@ typedef VkAttachmentDescription h_attachment_description;
 typedef VkRenderPass h_render_pass;
 typedef VkRenderPassCreateInfo h_info_render_pass;
 	#define h_make_info_render_pass(                        \
-			in_attachment_count,                                \
-			in_attachments,                                     \
-			in_subpass_count,                                   \
-			in_subpasses,                                       \
-			in_dependency_count,                                \
-			in_dependencies )                                   \
+		in_attachment_count,                                  \
+		in_attachments,                                       \
+		in_subpass_count,                                     \
+		in_subpasses,                                         \
+		in_dependency_count,                                  \
+		in_dependencies                                       \
+	)                                                       \
 		( h_info_render_pass )                                \
 		{                                                     \
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, \
@@ -475,11 +523,12 @@ h_render_pass h_new_render_pass( h_device in_device, h_info_render_pass in_info 
 
 typedef VkRenderPassBeginInfo h_info_begin_render_pass;
 	#define h_make_info_begin_render_pass(                 \
-			in_render_pass,                                    \
-			in_framebuffer,                                    \
-			in_render_area,                                    \
-			in_clear_count,                                    \
-			in_clear_values )                                  \
+		in_render_pass,                                      \
+		in_framebuffer,                                      \
+		in_render_area,                                      \
+		in_clear_count,                                      \
+		in_clear_values                                      \
+	)                                                      \
 		( h_info_begin_render_pass )                         \
 		{                                                    \
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, \
@@ -530,22 +579,23 @@ h_fence h_new_fence( h_device in_device, h_info_fence in_info )
 typedef VkPipeline h_pipeline;
 typedef VkGraphicsPipelineCreateInfo h_info_pipeline;
 	#define h_make_info_pipeline(                                 \
-			in_stage_count,                                           \
-			in_stages,                                                \
-			in_vertex_input_state,                                    \
-			in_input_assembly_state,                                  \
-			in_tessellation_state,                                    \
-			in_viewport_state,                                        \
-			in_rasterization_state,                                   \
-			in_multisample_state,                                     \
-			in_depth_stencil_state,                                   \
-			in_color_blend_state,                                     \
-			in_dynamic_state,                                         \
-			in_layout,                                                \
-			in_render_pass,                                           \
-			in_subpass,                                               \
-			in_base_pipeline_handle,                                  \
-			in_base_pipeline_index )                                  \
+		in_stage_count,                                             \
+		in_stages,                                                  \
+		in_vertex_input_state,                                      \
+		in_input_assembly_state,                                    \
+		in_tessellation_state,                                      \
+		in_viewport_state,                                          \
+		in_rasterization_state,                                     \
+		in_multisample_state,                                       \
+		in_depth_stencil_state,                                     \
+		in_color_blend_state,                                       \
+		in_dynamic_state,                                           \
+		in_layout,                                                  \
+		in_render_pass,                                             \
+		in_subpass,                                                 \
+		in_base_pipeline_handle,                                    \
+		in_base_pipeline_index                                      \
+	)                                                             \
 		( h_info_pipeline )                                         \
 		{                                                           \
 			.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, \
@@ -579,10 +629,11 @@ h_pipeline h_new_pipeline( h_device in_device, h_info_pipeline in_info )
 typedef VkPipelineLayout h_pipeline_layout;
 typedef VkPipelineLayoutCreateInfo h_info_pipeline_layout;
 	#define h_make_info_pipeline_layout(                        \
-			in_set_layout_count,                                    \
-			in_set_layouts,                                         \
-			in_push_constant_range_count,                           \
-			in_push_constant_ranges )                               \
+		in_set_layout_count,                                      \
+		in_set_layouts,                                           \
+		in_push_constant_range_count,                             \
+		in_push_constant_ranges                                   \
+	)                                                           \
 		( h_info_pipeline_layout )                                \
 		{                                                         \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, \
@@ -605,9 +656,10 @@ typedef VkDescriptorSetLayout h_descriptor_set_layout;
 typedef VkDescriptorSetLayoutBinding h_descriptor_set_layout_binding;
 typedef VkDescriptorSetLayoutCreateInfo h_info_descriptor_set_layout;
 	#define h_make_info_descriptor_set_layout(                        \
-			in_binding_count,                                             \
-			in_bindings,                                                  \
-			in_flags )                                                    \
+		in_binding_count,                                               \
+		in_bindings,                                                    \
+		in_flags                                                        \
+	)                                                                 \
 		( h_info_descriptor_set_layout )                                \
 		{                                                               \
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, \
@@ -626,9 +678,10 @@ h_descriptor_set_layout h_new_descriptor_set_layout( h_device in_device, h_info_
 typedef VkDescriptorSet h_descriptor_set;
 typedef VkDescriptorSetAllocateInfo h_info_descriptor_set;
 	#define h_make_info_descriptor_set(                          \
-			in_descriptor_pool,                                      \
-			in_descriptor_set_count,                                 \
-			in_set_layouts )                                         \
+		in_descriptor_pool,                                        \
+		in_descriptor_set_count,                                   \
+		in_set_layouts                                             \
+	)                                                            \
 		( h_info_descriptor_set )                                  \
 		{                                                          \
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, \
@@ -649,12 +702,13 @@ h_descriptor_set h_new_descriptor_set( h_device in_device, h_info_descriptor_set
 typedef VkFramebuffer h_framebuffer;
 typedef VkFramebufferCreateInfo h_info_framebuffer;
 	#define h_make_info_framebuffer(                        \
-			in_render_pass,                                     \
-			in_attachment_count,                                \
-			in_attachments,                                     \
-			in_width,                                           \
-			in_height,                                          \
-			in_layers )                                         \
+		in_render_pass,                                       \
+		in_attachment_count,                                  \
+		in_attachments,                                       \
+		in_width,                                             \
+		in_height,                                            \
+		in_layers                                             \
+	)                                                       \
 		( h_info_framebuffer )                                \
 		{                                                     \
 			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO, \
@@ -678,7 +732,8 @@ h_framebuffer h_new_framebuffer( h_device in_device, h_info_framebuffer in_info 
 typedef VkCommandPool h_command_pool;
 typedef VkCommandPoolCreateInfo h_info_command_pool;
 	#define h_make_info_command_pool(                        \
-			in_queue_family_index )                              \
+		in_queue_family_index                                  \
+	)                                                        \
 		( h_info_command_pool )                                \
 		{                                                      \
 			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, \
@@ -697,9 +752,10 @@ h_command_pool h_new_command_pool( h_device in_device, h_info_command_pool in_in
 typedef VkCommandBuffer h_command_buffer;
 typedef VkCommandBufferAllocateInfo h_info_command_buffer;
 	#define h_make_info_command_buffer(                          \
-			in_command_pool,                                         \
-			in_level,                                                \
-			in_count )                                               \
+		in_command_pool,                                           \
+		in_level,                                                  \
+		in_count                                                   \
+	)                                                            \
 		( h_info_command_buffer )                                  \
 		{                                                          \
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, \
@@ -720,13 +776,14 @@ void h_allocate_command_buffers( h_device in_device, h_info_command_buffer in_in
 
 typedef VkSubmitInfo h_info_submit;
 	#define h_make_info_submit(                                                 \
-			in_ready_semaphore_count,                                               \
-			in_ready_semaphores,                                                    \
-			in_wait_stages,                                                         \
-			in_command_count,                                                       \
-			in_commands,                                                            \
-			in_done_semaphore_count,                                                \
-			in_done_semaphores )                                                    \
+		in_ready_semaphore_count,                                                 \
+		in_ready_semaphores,                                                      \
+		in_wait_stages,                                                           \
+		in_command_count,                                                         \
+		in_commands,                                                              \
+		in_done_semaphore_count,                                                  \
+		in_done_semaphores                                                        \
+	)                                                                           \
 		( h_info_submit )                                                         \
 		{                                                                         \
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,                                 \
