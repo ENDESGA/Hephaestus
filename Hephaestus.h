@@ -62,7 +62,7 @@ typedef VkApplicationInfo H_info_app;
 
 //
 
-inline H_info_app new_Hephaestus_info( const char* in_name, unsigned int in_version )
+inline H_info_app H_new_info( const char* in_name, unsigned int in_version )
 {
 	volkInitialize();
 	return H_create_info_app( in_name, H_create_version( in_version, 0, 0 ), "hept", H_create_version( 0, 0, 1 ), H_create_version( 1, 3, 0 ) );
@@ -70,9 +70,9 @@ inline H_info_app new_Hephaestus_info( const char* in_name, unsigned int in_vers
 
 //
 
-unsigned int get_debug_layers( H_layer_properties* in_layers )
+unsigned int H_get_debug_layers( H_layer_properties* in_layers )
 {
-	u32 debug_layer_count = 0;
+	static unsigned int debug_layer_count = 0;
 	vkEnumerateInstanceLayerProperties( &debug_layer_count, in_layers );
 	return debug_layer_count;
 }
@@ -115,7 +115,7 @@ typedef VkSurfaceFormatKHR H_surface_format;
 
 typedef VkPhysicalDevice H_physical_device;
 typedef VkPhysicalDeviceProperties H_physical_device_properties;
-typedef VkPhysicalDeviceMemoryProperties H_physical_device_mem_properties;
+typedef VkPhysicalDeviceMemoryProperties H_physical_device_memory_properties;
 typedef VkPhysicalDeviceFeatures H_physical_device_features;
 typedef VkDevice H_device;
 typedef VkDeviceCreateInfo H_info_device;
@@ -140,6 +140,29 @@ typedef VkDeviceCreateInfo H_info_device;
 			.pEnabledFeatures = in_enabled_features,               \
 		}
 
+unsigned int H_get_physical_devices( H_instance in_instance, H_physical_device* out_physical_devices )
+{
+	static unsigned int physical_device_count = 0;
+	vkEnumeratePhysicalDevices( in_instance, &physical_device_count, out_physical_devices );
+	return physical_device_count;
+}
+
+H_physical_device_features H_get_physical_device_features( H_physical_device in_physical_device )
+{
+	static H_physical_device_features features;
+	vkGetPhysicalDeviceFeatures( in_physical_device, &features );
+	return features;
+}
+
+typedef VkQueueFamilyProperties H_physical_device_queue_properties;
+
+unsigned int H_get_physical_device_queue_properties( H_physical_device in_physical_device, H_physical_device_queue_properties* out_properties )
+{
+	static unsigned int queue_family_count = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties( in_physical_device, &queue_family_count, out_properties );
+	return queue_family_count;
+}
+
 typedef VkDeviceQueueCreateInfo H_info_device_queue;
 	#define H_create_info_device_queue(                                          \
 		in_queue_family_index,                                                     \
@@ -163,34 +186,48 @@ H_device H_new_device( H_physical_device in_physical_device, H_info_device in_in
 
 //
 
-typedef VkBuffer H_device_buffer;
-typedef struct VkBuffer_T struct_H_device_buffer;
-typedef VkBufferCreateInfo H_info_buffer;
+typedef VkBuffer H_buffer;
 typedef VkBufferUsageFlags H_buffer_usage;
-
 	#define H_buffer_usage_vertex VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
 	#define H_buffer_usage_index VK_BUFFER_USAGE_INDEX_BUFFER_BIT
 	#define H_buffer_usage_storage VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
 	#define H_buffer_usage_indirect VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT
 	#define H_buffer_usage_uniform VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT
 	#define H_buffer_usage_transfer_dst VK_BUFFER_USAGE_TRANSFER_DST_BIT
-
-typedef VkDeviceMemory H_device_mem;
-typedef struct VkDeviceMemory_T struct_H_device_mem;
-typedef VkMemoryRequirements H_mem_requirements;
-typedef VkMemoryAllocateInfo H_info_mem_allocate;
-typedef VkMemoryPropertyFlags H_mem_properties;
-
-	#define H_mem_property_host_visible VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-	#define H_mem_property_host_coherent VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-	#define H_mem_property_host_cached VK_MEMORY_PROPERTY_HOST_CACHED_BIT
-	#define H_mem_property_device_local VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-	#define H_mem_property_protected VK_MEMORY_PROPERTY_PROTECTED_BIT
-	#define H_mem_property_lazily_allocated VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT
-
-unsigned int H_find_mem( H_physical_device in_physical_device, unsigned int in_type_filter, H_mem_properties in_properties )
+typedef VkBufferCreateInfo H_info_buffer;
+	#define H_create_info_buffer(                      \
+		in_size,                                         \
+		in_usage,                                        \
+		in_sharing_mode                                  \
+	)                                                  \
+		( H_info_buffer )                                \
+		{                                                \
+			.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, \
+			.size = in_size,                               \
+			.usage = in_usage,                             \
+			.sharingMode = in_sharing_mode                 \
+		}
+H_buffer H_new_buffer( H_device in_device, H_info_buffer in_info )
 {
-	H_physical_device_mem_properties memory_properties;
+	static H_buffer temp_buffer = NULL;
+	vkCreateBuffer( in_device, &in_info, NULL, &temp_buffer );
+	return temp_buffer;
+}
+
+typedef VkDeviceMemory H_memory;
+typedef VkMemoryRequirements H_memory_requirements;
+typedef VkMemoryPropertyFlags H_memory_properties;
+
+	#define H_memory_property_host_visible VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+	#define H_memory_property_host_coherent VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+	#define H_memory_property_host_cached VK_MEMORY_PROPERTY_HOST_CACHED_BIT
+	#define H_memory_property_device_local VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+	#define H_memory_property_protected VK_MEMORY_PROPERTY_PROTECTED_BIT
+	#define H_memory_property_lazily_allocated VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT
+
+unsigned int H_find_mem( H_physical_device in_physical_device, unsigned int in_type_filter, H_memory_properties in_properties )
+{
+	H_physical_device_memory_properties memory_properties;
 	vkGetPhysicalDeviceMemoryProperties( in_physical_device, &memory_properties );
 
 	for( unsigned int i = 0; i < memory_properties.memoryTypeCount; i++ )
@@ -201,6 +238,32 @@ unsigned int H_find_mem( H_physical_device in_physical_device, unsigned int in_t
 		}
 	}
 	return 0;
+}
+
+H_memory_requirements H_get_memory_requirements_buffer( H_device in_device, H_buffer in_buffer)
+{
+	static H_memory_requirements temp_requirements;
+	vkGetBufferMemoryRequirements( in_device, in_buffer, &temp_requirements );
+	return temp_requirements;
+}
+
+typedef VkMemoryAllocateInfo H_info_memory;
+	#define H_create_info_memory(                      \
+		in_size,                                        \
+		in_memory_index                                  \
+	)                                                  \
+		( H_info_memory )                                \
+		{                                                \
+			.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, \
+			.allocationSize = in_size,                     \
+			.memoryTypeIndex = in_memory_index             \
+		}
+H_memory H_new_memory_buffer( H_device in_device, H_info_memory in_info, H_buffer in_buffer )
+{
+	static H_memory temp_memory = NULL;
+	vkAllocateMemory( in_device, &in_info, NULL, &temp_memory );
+	vkBindBufferMemory( in_device, in_buffer, temp_memory, 0 );
+	return temp_memory;
 }
 
 //
@@ -279,6 +342,50 @@ typedef VkComponentMapping H_component_mapping;
 //
 
 typedef VkSampler H_sampler;
+typedef VkSamplerCreateInfo H_info_sampler;
+	#define H_create_info_sampler(                             \
+		in_mag_filter,                                           \
+		in_min_filter,                                           \
+		in_mipmap_mode,                                          \
+		in_mode_U,                                               \
+		in_mode_V,                                               \
+		in_mode_W,                                               \
+		in_mip_lod_bias,                                         \
+		in_anisotropy_enable,                                    \
+		in_max_anisotropy,                                       \
+		in_compare_enable,                                       \
+		in_compare_op,                                           \
+		in_min_lod,                                              \
+		in_max_lod,                                              \
+		in_border_color,                                         \
+		in_unnormalized_coordinates                              \
+	)                                                          \
+		( H_info_sampler )                                       \
+		{                                                        \
+			.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,        \
+			.magFilter = in_mag_filter,                            \
+			.minFilter = in_min_filter,                            \
+			.mipmapMode = in_mipmap_mode,                          \
+			.addressModeU = in_mode_U,                             \
+			.addressModeV = in_mode_V,                             \
+			.addressModeW = in_mode_W,                             \
+			.mipLodBias = in_mip_lod_bias,                         \
+			.anisotropyEnable = in_anisotropy_enable,              \
+			.maxAnisotropy = in_max_anisotropy,                    \
+			.compareEnable = in_compare_enable,                    \
+			.compareOp = in_compare_op,                            \
+			.minLod = in_min_lod,                                  \
+			.maxLod = in_max_lod,                                  \
+			.borderColor = in_border_color,                        \
+			.unnormalizedCoordinates = in_unnormalized_coordinates \
+		}
+
+H_sampler H_new_sampler( H_device in_device, H_info_sampler in_info )
+{
+	H_sampler temp_sampler;
+	vkCreateSampler( in_device, &in_info, NULL, &temp_sampler );
+	return temp_sampler;
+}
 
 //
 
@@ -319,6 +426,21 @@ H_image H_new_image( H_device in_device, H_info_image in_info )
 	H_image temp_image;
 	vkCreateImage( in_device, &in_info, NULL, &temp_image );
 	return temp_image;
+}
+
+H_memory_requirements H_get_memory_requirements_image( H_device in_device, H_image in_image)
+{
+	static H_memory_requirements temp_requirements;
+	vkGetImageMemoryRequirements( in_device, in_image, &temp_requirements );
+	return temp_requirements;
+}
+
+H_memory H_new_memory_image( H_device in_device, H_info_memory in_info, H_image in_image )
+{
+	static H_memory temp_memory = NULL;
+	vkAllocateMemory( in_device, &in_info, NULL, &temp_memory );
+	vkBindImageMemory( in_device, in_image, temp_memory, 0 );
+	return temp_memory;
 }
 
 typedef VkImageView H_image_view;
@@ -692,7 +814,7 @@ typedef VkDescriptorSetLayoutCreateInfo H_info_descriptor_set_layout;
 H_descriptor_set_layout H_new_descriptor_set_layout( H_device in_device, H_info_descriptor_set_layout in_info )
 {
 	H_descriptor_set_layout temp_descriptor_set;
-	vkCreateDescriptorSetLayout( in_device, &in_info, null, &temp_descriptor_set );
+	vkCreateDescriptorSetLayout( in_device, &in_info, NULL, &temp_descriptor_set );
 	return temp_descriptor_set;
 }
 
@@ -717,7 +839,7 @@ typedef VkDescriptorPoolCreateInfo H_info_descriptor_pool;
 H_descriptor_pool H_new_descriptor_pool( H_device in_device, H_info_descriptor_pool in_info )
 {
 	H_descriptor_pool temp_descriptor_pool;
-	vkCreateDescriptorPool( in_device, &in_info, null, &temp_descriptor_pool );
+	vkCreateDescriptorPool( in_device, &in_info, NULL, &temp_descriptor_pool );
 	return temp_descriptor_pool;
 }
 
@@ -745,23 +867,40 @@ H_descriptor_set H_new_descriptor_set( H_device in_device, H_info_descriptor_set
 
 //
 
-void update_descriptor_set_image( H_device in_device, H_descriptor_set in_descriptor_set, H_sampler in_sampler, H_image_view in_image_view ) {
-	VkDescriptorImageInfo image_info = {
-		.sampler = in_sampler,
-		.imageView = in_image_view,
-		.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	};
+void H_update_descriptor_set_storage( unsigned int in_binding, H_device in_device, H_descriptor_set in_descriptor_set, H_buffer in_buffer, unsigned long long int in_size )
+{
+	VkDescriptorBufferInfo buffer_info = {
+		.offset = 0,
+		.buffer = in_buffer,
+		.range = in_size };
 
 	VkWriteDescriptorSet descriptor_write = {
 		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 		.dstSet = in_descriptor_set,
-		.dstBinding = 1,
+		.dstBinding = in_binding,
+		.descriptorCount = 1,
+		.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		.pBufferInfo = &buffer_info };
+
+	vkUpdateDescriptorSets( in_device, 1, &descriptor_write, 0, NULL );
+}
+
+void H_update_descriptor_set_image( unsigned int in_binding, H_device in_device, H_descriptor_set in_descriptor_set, H_sampler in_sampler, H_image_view in_image_view )
+{
+	VkDescriptorImageInfo image_info = {
+		.sampler = in_sampler,
+		.imageView = in_image_view,
+		.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+
+	VkWriteDescriptorSet descriptor_write = {
+		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		.dstSet = in_descriptor_set,
+		.dstBinding = in_binding,
 		.descriptorCount = 1,
 		.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		.pImageInfo = &image_info
-	};
+		.pImageInfo = &image_info };
 
-	vkUpdateDescriptorSets(in_device, 1, &descriptor_write, 0, NULL);
+	vkUpdateDescriptorSets( in_device, 1, &descriptor_write, 0, NULL );
 }
 
 //
