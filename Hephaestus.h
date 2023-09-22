@@ -65,7 +65,7 @@ typedef VkApplicationInfo H_info_app;
 inline H_info_app H_new_info( const char* in_name, unsigned int in_version )
 {
 	volkInitialize();
-	return H_create_info_app( in_name, H_create_version( in_version, 0, 0 ), "hept", H_create_version( 0, 0, 1 ), H_create_version( 1, 3, 0 ) );
+	return H_create_info_app( in_name, H_create_version( in_version, 0, 0 ), "hept", H_create_version( 0, 0, 1 ), H_create_version( 1, 0, 0 ) );
 }
 
 //
@@ -240,7 +240,7 @@ unsigned int H_find_mem( H_physical_device in_physical_device, unsigned int in_t
 	return 0;
 }
 
-H_memory_requirements H_get_memory_requirements_buffer( H_device in_device, H_buffer in_buffer)
+H_memory_requirements H_get_memory_requirements_buffer( H_device in_device, H_buffer in_buffer )
 {
 	static H_memory_requirements temp_requirements;
 	vkGetBufferMemoryRequirements( in_device, in_buffer, &temp_requirements );
@@ -248,15 +248,15 @@ H_memory_requirements H_get_memory_requirements_buffer( H_device in_device, H_bu
 }
 
 typedef VkMemoryAllocateInfo H_info_memory;
-	#define H_create_info_memory(                      \
-		in_size,                                        \
-		in_memory_index                                  \
-	)                                                  \
-		( H_info_memory )                                \
-		{                                                \
+	#define H_create_info_memory(                        \
+		in_size,                                           \
+		in_memory_index                                    \
+	)                                                    \
+		( H_info_memory )                                  \
+		{                                                  \
 			.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, \
-			.allocationSize = in_size,                     \
-			.memoryTypeIndex = in_memory_index             \
+			.allocationSize = in_size,                       \
+			.memoryTypeIndex = in_memory_index               \
 		}
 H_memory H_new_memory_buffer( H_device in_device, H_info_memory in_info, H_buffer in_buffer )
 {
@@ -389,6 +389,15 @@ H_sampler H_new_sampler( H_device in_device, H_info_sampler in_info )
 
 //
 
+	#define H_image_usage_transfer_src VK_IMAGE_USAGE_TRANSFER_SRC_BIT
+	#define H_image_usage_transfer_dst VK_IMAGE_USAGE_TRANSFER_DST_BIT
+	#define H_image_usage_sampled VK_IMAGE_USAGE_SAMPLED_BIT
+	#define H_image_usage_storage VK_IMAGE_USAGE_STORAGE_BIT
+	#define H_image_usage_color_attachment VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
+	#define H_image_usage_depth_stencil_attachment VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
+	#define H_image_usage_transient_attachment VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT
+	#define H_image_usage_input_attachment VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT
+
 typedef VkImage H_image;
 typedef VkImageSubresourceRange H_image_subresource_range;
 typedef VkImageLayout H_image_layout;
@@ -428,7 +437,7 @@ H_image H_new_image( H_device in_device, H_info_image in_info )
 	return temp_image;
 }
 
-H_memory_requirements H_get_memory_requirements_image( H_device in_device, H_image in_image)
+H_memory_requirements H_get_memory_requirements_image( H_device in_device, H_image in_image )
 {
 	static H_memory_requirements temp_requirements;
 	vkGetImageMemoryRequirements( in_device, in_image, &temp_requirements );
@@ -442,6 +451,52 @@ H_memory H_new_memory_image( H_device in_device, H_info_memory in_info, H_image 
 	vkBindImageMemory( in_device, in_image, temp_memory, 0 );
 	return temp_memory;
 }
+
+typedef VkImageLayout H_image_layout;
+	#define H_image_layout_undefined VK_IMAGE_LAYOUT_UNDEFINED
+	#define H_image_layout_general VK_IMAGE_LAYOUT_GENERAL
+	#define H_image_layout_color_attachment_optimal VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	#define H_image_layout_depth_stencil_attachment_optimal VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	#define H_image_layout_depth_stencil_read_only_optimal VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL
+	#define H_image_layout_shader_read_only_optimal VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	#define H_image_layout_transfer_src_optimal VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+	#define H_image_layout_transfer_dst_optimal VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+	#define H_image_layout_preinitialized VK_IMAGE_LAYOUT_PREINITIALIZED
+	#define H_image_layout_depth_read_only_stencil_attachment_optimal VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL
+	#define H_image_layout_depth_attachment_stencil_read_only_optimal VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL
+	#define H_image_layout_present_src_KHR VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+
+typedef VkImageMemoryBarrier H_image_barrier;
+	#define H_create_image_barrier(                       \
+		in_image,                                          \
+		in_oldLayout,                                      \
+		in_newLayout,                                      \
+		in_srcAccessMask,                                  \
+		in_dstAccessMask,                                  \
+		in_aspectMask,                                     \
+		in_baseMipLevel,                                   \
+		in_levelCount,                                     \
+		in_baseArrayLayer,                                 \
+		in_layerCount                                      \
+	)                                                    \
+		( H_image_barrier )                                 \
+		{                                                  \
+			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER, \
+			.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,  \
+			.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,  \
+			.image = in_image,                               \
+			.oldLayout = in_oldLayout,                       \
+			.newLayout = in_newLayout,                       \
+			.srcAccessMask = in_srcAccessMask,               \
+			.dstAccessMask = in_dstAccessMask,               \
+			.subresourceRange = {                            \
+				.aspectMask = in_aspectMask,                   \
+				.baseMipLevel = in_baseMipLevel,               \
+				.levelCount = in_levelCount,                   \
+				.baseArrayLayer = in_baseArrayLayer,           \
+				.layerCount = in_layerCount                    \
+			}                                                \
+		}
 
 typedef VkImageView H_image_view;
 typedef VkImageViewCreateInfo H_info_image_view;
@@ -555,12 +610,14 @@ typedef VkPipelineVertexInputStateCreateInfo H_info_pipeline_vertex;
 
 typedef VkPipelineInputAssemblyStateCreateInfo H_info_pipeline_assembly;
 	#define H_create_info_pipeline_assembly(                                  \
-		in_topology                                                             \
+		in_topology,                                                            \
+		in_primitive_restart_enable                                             \
 	)                                                                         \
 		( H_info_pipeline_assembly )                                            \
 		{                                                                       \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO, \
-			.topology = in_topology                                               \
+			.topology = in_topology,                                              \
+			.primitiveRestartEnable = in_primitive_restart_enable,                \
 		}
 
 typedef VkPrimitiveTopology H_topology;
@@ -608,22 +665,252 @@ typedef VkPipelineViewportStateCreateInfo H_info_pipeline_viewport;
 			.pScissors = in_scissors,                                       \
 		}
 
-//
-
 typedef VkPipelineRasterizationStateCreateInfo H_info_pipeline_raster;
 	#define H_create_info_pipeline_raster(                                   \
+		in_depth_clamp_enable,                                                 \
+		in_rasterizer_discard_enable,                                          \
 		in_polygon_mode,                                                       \
-		in_line_width,                                                         \
 		in_cull_mode,                                                          \
-		in_front_face                                                          \
+		in_front_face,                                                         \
+		in_depth_bias_enable,                                                  \
+		in_depth_bias_constant_factor,                                         \
+		in_depth_bias_clamp,                                                   \
+		in_depth_bias_slope_factor,                                            \
+		in_line_width                                                          \
 	)                                                                        \
 		( H_info_pipeline_raster )                                             \
 		{                                                                      \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, \
+			.flags = 0,                                                          \
+			.depthClampEnable = in_depth_clamp_enable,                           \
+			.rasterizerDiscardEnable = in_rasterizer_discard_enable,             \
 			.polygonMode = in_polygon_mode,                                      \
-			.lineWidth = in_line_width,                                          \
 			.cullMode = in_cull_mode,                                            \
 			.frontFace = in_front_face,                                          \
+			.depthBiasEnable = in_depth_bias_enable,                             \
+			.depthBiasConstantFactor = in_depth_bias_constant_factor,            \
+			.depthBiasClamp = in_depth_bias_clamp,                               \
+			.depthBiasSlopeFactor = in_depth_bias_slope_factor,                  \
+			.lineWidth = in_line_width                                           \
+		}
+
+	#define H_multisamples_1 VK_SAMPLE_COUNT_1_BIT
+	#define H_multisamples_2 VK_SAMPLE_COUNT_2_BIT
+	#define H_multisamples_4 VK_SAMPLE_COUNT_4_BIT
+	#define H_multisamples_8 VK_SAMPLE_COUNT_8_BIT
+	#define H_multisamples_16 VK_SAMPLE_COUNT_16_BIT
+	#define H_multisamples_32 VK_SAMPLE_COUNT_32_BIT
+	#define H_multisamples_64 VK_SAMPLE_COUNT_64_BIT
+
+typedef VkPipelineMultisampleStateCreateInfo H_info_pipeline_multisample;
+	#define H_create_info_pipeline_multisample(                            \
+		in_rasterization_samples,                                            \
+		in_sample_shading_enable,                                            \
+		in_min_sample_shading,                                               \
+		in_p_sample_mask,                                                    \
+		in_alpha_to_coverage_enable,                                         \
+		in_alpha_to_one_enable                                               \
+	)                                                                      \
+		( H_info_pipeline_multisample )                                      \
+		{                                                                    \
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, \
+			.rasterizationSamples = in_rasterization_samples,                  \
+			.sampleShadingEnable = in_sample_shading_enable,                   \
+			.minSampleShading = in_min_sample_shading,                         \
+			.pSampleMask = in_p_sample_mask,                                   \
+			.alphaToCoverageEnable = in_alpha_to_coverage_enable,              \
+			.alphaToOneEnable = in_alpha_to_one_enable                         \
+		}
+
+typedef VkPipelineDepthStencilStateCreateInfo H_info_pipeline_depth_stencil;
+	#define H_create_info_pipeline_depth_stencil(                            \
+		in_depth_test_enable,                                                  \
+		in_depth_write_enable,                                                 \
+		in_depth_compare_op,                                                   \
+		in_depth_bounds_test_enable,                                           \
+		in_stencil_test_enable,                                                \
+		in_front_stencil_op_state,                                             \
+		in_back_stencil_op_state,                                              \
+		in_min_depth_bounds,                                                   \
+		in_max_depth_bounds                                                    \
+	)                                                                        \
+		( H_info_pipeline_depth_stencil )                                      \
+		{                                                                      \
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, \
+			.depthTestEnable = in_depth_test_enable,                             \
+			.depthWriteEnable = in_depth_write_enable,                           \
+			.depthCompareOp = in_depth_compare_op,                               \
+			.depthBoundsTestEnable = in_depth_bounds_test_enable,                \
+			.stencilTestEnable = in_stencil_test_enable,                         \
+			.front = in_front_stencil_op_state,                                  \
+			.back = in_back_stencil_op_state,                                    \
+			.minDepthBounds = in_min_depth_bounds,                               \
+			.maxDepthBounds = in_max_depth_bounds                                \
+		}
+
+typedef VkPipelineColorBlendAttachmentState H_info_pipeline_blend_mode;
+	#define H_create_info_pipeline_blend_mode(            \
+		in_blend_enable,                                    \
+		in_src_color_blend_factor,                          \
+		in_dst_color_blend_factor,                          \
+		in_color_blend_op,                                  \
+		in_src_alpha_blend_factor,                          \
+		in_dst_alpha_blend_factor,                          \
+		in_alpha_blend_op,                                  \
+		in_color_write_mask                                 \
+	)                                                     \
+		{                                                   \
+			.blendEnable = in_blend_enable,                   \
+			.srcColorBlendFactor = in_src_color_blend_factor, \
+			.dstColorBlendFactor = in_dst_color_blend_factor, \
+			.colorBlendOp = in_color_blend_op,                \
+			.srcAlphaBlendFactor = in_src_alpha_blend_factor, \
+			.dstAlphaBlendFactor = in_dst_alpha_blend_factor, \
+			.alphaBlendOp = in_alpha_blend_op,                \
+			.colorWriteMask = in_color_write_mask,            \
+		}
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_none = H_create_info_pipeline_blend_mode(
+	VK_FALSE,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ZERO,
+	VK_BLEND_OP_ADD,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ZERO,
+	VK_BLEND_OP_ADD,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_normal = H_create_info_pipeline_blend_mode(
+	VK_TRUE,
+	VK_BLEND_FACTOR_SRC_ALPHA,
+	VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+	VK_BLEND_OP_ADD,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ZERO,
+	VK_BLEND_OP_ADD,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_constant = H_create_info_pipeline_blend_mode(
+	VK_TRUE,
+	VK_BLEND_FACTOR_CONSTANT_COLOR,
+	VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+	VK_BLEND_OP_ADD,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ZERO,
+	VK_BLEND_OP_ADD,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_add = H_create_info_pipeline_blend_mode(
+	VK_TRUE,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_OP_ADD,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_OP_ADD,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_subtract = H_create_info_pipeline_blend_mode(
+	VK_TRUE,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_OP_REVERSE_SUBTRACT,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_OP_REVERSE_SUBTRACT,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_multiply = H_create_info_pipeline_blend_mode(
+	VK_TRUE,
+	VK_BLEND_FACTOR_DST_COLOR,
+	VK_BLEND_FACTOR_ZERO,
+	VK_BLEND_OP_ADD,
+	VK_BLEND_FACTOR_DST_ALPHA,
+	VK_BLEND_FACTOR_ZERO,
+	VK_BLEND_OP_ADD,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_screen = H_create_info_pipeline_blend_mode(
+	VK_TRUE,
+	VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_OP_ADD,
+	VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA,
+	VK_BLEND_FACTOR_ONE,
+	VK_BLEND_OP_ADD,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+volatile static const H_info_pipeline_blend_mode H_blend_mode_overlay = H_create_info_pipeline_blend_mode(
+	VK_TRUE,
+	VK_BLEND_FACTOR_SRC_COLOR,
+	VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
+	VK_BLEND_OP_ADD,
+	VK_BLEND_FACTOR_SRC_ALPHA,
+	VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+	VK_BLEND_OP_ADD,
+	VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+);
+
+typedef VkPipelineColorBlendStateCreateInfo H_info_pipeline_blend;
+	#define H_create_info_pipeline_blend(                                  \
+		in_logic_op_enable,                                                  \
+		in_logic_op,                                                         \
+		in_blend_mode_count,                                                 \
+		in_blend_modes,                                                      \
+		in_blend_r,                                                          \
+		in_blend_g,                                                          \
+		in_blend_b,                                                          \
+		in_blend_a                                                           \
+	)                                                                      \
+		( H_info_pipeline_blend )                                            \
+		{                                                                    \
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, \
+			.logicOpEnable = in_logic_op_enable,                               \
+			.logicOp = in_logic_op,                                            \
+			.attachmentCount = in_blend_mode_count,                            \
+			.pAttachments = in_blend_modes,                                    \
+			.blendConstants[ 0 ] = in_blend_r,                                 \
+			.blendConstants[ 1 ] = in_blend_g,                                 \
+			.blendConstants[ 2 ] = in_blend_b,                                 \
+			.blendConstants[ 3 ] = in_blend_a,                                 \
+		}
+
+typedef VkDynamicState H_dynamic_state;
+typedef VkPipelineDynamicStateCreateInfo H_info_pipeline_dynamic;
+	#define H_create_info_pipeline_dynamic(                            \
+		in_dynamic_state_count,                                          \
+		in_p_dynamic_states                                              \
+	)                                                                  \
+		{                                                                \
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO, \
+			.dynamicStateCount = in_dynamic_state_count,                   \
+			.pDynamicStates = in_p_dynamic_states,                         \
+			.flags = 0,                                                    \
+			.pNext = NULL                                                  \
+		}
+
+volatile static const H_info_pipeline_dynamic H_dynamic_state_normal = H_create_info_pipeline_dynamic(
+	2, ( ( H_dynamic_state[] ){ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_BLEND_CONSTANTS } )
+);
+
+typedef VkPushConstantRange H_info_push_constant_range;
+	#define H_create_info_push_constant_range( \
+		in_stage_flags,                          \
+		in_offset,                               \
+		in_size                                  \
+	)                                          \
+		( H_info_push_constant_range )           \
+		{                                        \
+			.stageFlags = in_stage_flags,          \
+			.offset = in_offset,                   \
+			.size = in_size,                       \
 		}
 
 //
@@ -718,6 +1005,7 @@ H_fence H_new_fence( H_device in_device, H_info_fence in_info )
 typedef VkPipeline H_pipeline;
 typedef VkGraphicsPipelineCreateInfo H_info_pipeline;
 	#define H_create_info_pipeline(                               \
+		in_flags,                                                   \
 		in_stage_count,                                             \
 		in_stages,                                                  \
 		in_vertex_input_state,                                      \
@@ -738,6 +1026,7 @@ typedef VkGraphicsPipelineCreateInfo H_info_pipeline;
 		( H_info_pipeline )                                         \
 		{                                                           \
 			.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, \
+			.flags = in_flags,                                        \
 			.stageCount = in_stage_count,                             \
 			.pStages = in_stages,                                     \
 			.pVertexInputState = in_vertex_input_state,               \
@@ -770,16 +1059,16 @@ typedef VkPipelineLayoutCreateInfo H_info_pipeline_layout;
 	#define H_create_info_pipeline_layout(                      \
 		in_set_layout_count,                                      \
 		in_set_layouts,                                           \
-		in_pusH_constant_range_count,                             \
-		in_pusH_constant_ranges                                   \
+		in_push_constant_range_count,                             \
+		in_push_constant_ranges                                   \
 	)                                                           \
 		( H_info_pipeline_layout )                                \
 		{                                                         \
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, \
 			.setLayoutCount = in_set_layout_count,                  \
 			.pSetLayouts = in_set_layouts,                          \
-			.pushConstantRangeCount = in_pusH_constant_range_count, \
-			.pPushConstantRanges = in_pusH_constant_ranges,         \
+			.pushConstantRangeCount = in_push_constant_range_count, \
+			.pPushConstantRanges = in_push_constant_ranges,         \
 		}
 
 H_pipeline_layout H_new_pipeline_layout( H_device in_device, H_info_pipeline_layout in_info )
