@@ -16,7 +16,7 @@
 
 	#define H_create_version( major, minor, patch ) VK_MAKE_API_VERSION( 0, major, minor, patch )
 
-#define H_result VkResult
+	#define H_result VkResult
 
 //
 
@@ -918,25 +918,25 @@ typedef VkPipelineDepthStencilStateCreateInfo H_struct_pipeline_depth_stencil;
 
 typedef VkPipelineColorBlendAttachmentState H_struct_pipeline_blend_mode;
 	#define H_create_struct_pipeline_blend_mode( \
-		in_blend_enable,                         \
-		in_src_color_blend_factor,               \
-		in_dst_color_blend_factor,               \
-		in_color_blend_op,                       \
-		in_src_alpha_blend_factor,               \
-		in_dst_alpha_blend_factor,               \
-		in_alpha_blend_op,                       \
-		in_color_write_mask                      \
-	)                                          \
-		( H_struct_pipeline_blend_mode )         \
-		{                                        \
-			in_blend_enable,                       \
-				in_src_color_blend_factor,           \
-				in_dst_color_blend_factor,           \
-				in_color_blend_op,                   \
-				in_src_alpha_blend_factor,           \
-				in_dst_alpha_blend_factor,           \
-				in_alpha_blend_op,                   \
-				in_color_write_mask,                 \
+		in_blend_enable,                           \
+		in_src_color_blend_factor,                 \
+		in_dst_color_blend_factor,                 \
+		in_color_blend_op,                         \
+		in_src_alpha_blend_factor,                 \
+		in_dst_alpha_blend_factor,                 \
+		in_alpha_blend_op,                         \
+		in_color_write_mask                        \
+	)                                            \
+		( H_struct_pipeline_blend_mode )           \
+		{                                          \
+			in_blend_enable,                         \
+				in_src_color_blend_factor,             \
+				in_dst_color_blend_factor,             \
+				in_color_blend_op,                     \
+				in_src_alpha_blend_factor,             \
+				in_dst_alpha_blend_factor,             \
+				in_alpha_blend_op,                     \
+				in_color_write_mask,                   \
 		}
 
 volatile static H_struct_pipeline_blend_mode H_blend_mode_none;
@@ -1351,7 +1351,7 @@ typedef VkFenceCreateInfo H_struct_fence;
 		{                                      \
 			VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, \
 				NULL,                              \
-				VK_FENCE_CREATE_SIGNALED_BIT                                  \
+				VK_FENCE_CREATE_SIGNALED_BIT       \
 		}
 typedef VkFence H_fence;
 
@@ -1493,36 +1493,33 @@ void _H_submit_queue( H_queue in_queue, H_struct_submit* in_struct_submit, H_fen
 {
 	vkQueueSubmit( in_queue, 1, in_struct_submit, in_fence );
 }
-#define H_submit_queue( QUEUE, STRUCT_SUBMIT, FENCE ) _H_submit_queue( QUEUE, &STRUCT_SUBMIT, FENCE )
+	#define H_submit_queue( QUEUE, STRUCT_SUBMIT, FENCE ) _H_submit_queue( QUEUE, &STRUCT_SUBMIT, FENCE )
 
 typedef VkPresentInfoKHR H_struct_present;
-	#define H_create_struct_present(                    \
-    in_wait_semaphore_count,                        \
-    in_wait_semaphores,                           \
-    in_swapchain_count,                             \
-    in_swapchains,                                \
-    in_image_indices                             \
-)                                                   \
-    (H_struct_present)                              \
-    {                                               \
-        VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,         \
-        NULL,                                       \
-        in_wait_semaphore_count,                    \
-        in_wait_semaphores,                       \
-        in_swapchain_count,                         \
-        in_swapchains,                            \
-        in_image_indices,                         \
-        0                                \
-    }
+	#define H_create_struct_present(        \
+		in_wait_semaphore_count,              \
+		in_wait_semaphores,                   \
+		in_swapchain_count,                   \
+		in_swapchains,                        \
+		in_image_indices                      \
+	)                                       \
+		( H_struct_present )                  \
+		{                                     \
+			VK_STRUCTURE_TYPE_PRESENT_INFO_KHR, \
+				NULL,                             \
+				in_wait_semaphore_count,          \
+				in_wait_semaphores,               \
+				in_swapchain_count,               \
+				in_swapchains,                    \
+				in_image_indices,                 \
+				0                                 \
+		}
 
-
-H_result _H_present( H_queue in_queue, H_struct_present* in_struct_present)
+H_result _H_present( H_queue in_queue, H_struct_present* in_struct_present )
 {
-	return vkQueuePresentKHR(in_queue, in_struct_present);
+	return vkQueuePresentKHR( in_queue, in_struct_present );
 }
 	#define H_present( QUEUE, STRUCT_PRESENT ) _H_present( QUEUE, &STRUCT_PRESENT )
-
-
 
 //
 
